@@ -1,49 +1,36 @@
-Python 3.3.2 (v3.3.2:d047928ae3f6, May 16 2013, 00:06:53) [MSC v.1600 64 bit (AMD64)] on win32
-Type "copyright", "credits" or "license()" for more information.
->>> class Piston(object):
-	def Piston_pressure(self, atmosphericPressure, mass, crossSectionalArea):
-		self.mass= mass
-		self.atmP= atmosphericPressure
-		self.csa= crossSectionalArea
-	def totalPressure(self):
-		return self.atmP + (self.mass * 9.8)/self.csa
-	def pistonSpringSyatem(self, mass, springLength, springFinalLength, crossSectionalArea, springConstant, atmosphericPressure):
-		self.mass= mass
-		self.K= springConstant
-		self.finalLength= springFinalLength
-		self.naturalLength= springLength
-		self.csa= crossSectionalArea
-		self.atmP= atmosphericPressure
-	def totalPressureInSpringSystem(self):
-		return (self.mass * 9.8)/self.csa + self.atmP + (self.finalLength-self.naturalLength)/self.csa
-	def Piston_workIsobaric(self, pressure, initialVolume, finalVolume):
-		self.initialVolume= initialVolume
-		self.finalVolume= finalVolume
-		self.pressure= pressure
-	def totalWorkIsobaric(self):
-		return self.pressure * (self.finalVolume - self.initialVolume)
-	def piston_workIsothermalPressureForm(self, initialPressure, finalPressure, gasConstant, moles, temprature):
-		self.initialPressure= initialPressure
-		self.finalPressure= finalPressure
-		self.R= gasConstant
+ import math
+	class Piston(object):
+    def __init__(self, atmosphericPressure, mass, crossSectionalArea, initialPressure, initialVolume, initialtemprature, gasConstant, moles):
+        self.atmP= atmosphericPressure
+        self.m= mass
+        self.csa= crossSectionalArea
+        self.initP= initialPressure
+        self.initV= initialVolume
+        self.initTemp= initialTemprature
+        self.R= gasConstant
 		self.moles= moles
-		self.temp= temprature
-	def totalWorkIsothermalPressureForm(self):
-		import math
-		return self.moles * self.R * self.temp * log((self.initialPressure/self.finalPressure), 2.718281)
-	def piston_workIsothermalVolumeForm(self, initialVolume, finalVolume, gasConstant, moles, temprature):
-		self.initialVolume= initialVolume
-		self.finalVolume= finalVolume
-		self.R= gasConstant
-		self.moles= moles
-		self.temp= temprature
-	def totalWorkdoneIsothermalVolumeForm(self):
-		import math
-		return self.moles * self.R * self.temp * log((self.finalVolume/self.initialVolume), 2.718281)
-	def piston_workAdiabatic(self, moles, gasConstant, initialTemprature, finalTemprature):
-		self.moles= moles
-		self.R= gasConstant
-		self.initialTemprature= initialTemprature
-		self.finalTemprature= finalTemprature
-	def totalWorkAdiabatic(self):
-		return (-3/2)*self.moles*self.R*(self.finalTemprature - self.initialTemprature
+	def pressure(self):
+	""" This function calculates the total pressure in a piston cylinder system when a mass is kept on the piston"""
+		return self.atmP + (self.m * 9.8)/self.csa
+	def spring(self, springConstant, finalLength, length):
+	"""This function calculates the total pressure in a piston cylinder system attached with a spring and a mass kept on it"""
+	    self.K= springConstant
+		self.final= finalLength
+		self.length= length
+		return (self.m * 9.8)/self.csa + self.atmP + self.K*((self.final-self.length)/self.csa)
+	def WorkIsobaric(self, finalVolume):
+	"""This function calculates total workdone in a piston cylinder system when the process is isobaric"""
+	    self.finVol= finalVolume
+		return self.initP* (self.finVol - self.initVol)
+	def WorkIsothermalP(self, finalPressure):
+	"""This function calculates total workdone in a piston cylinder system when the process is isothermal and initial and final presure is given"""
+		self.finP= finalPressure
+		return self.moles * self.R * self.initTemp * log((self.initP/self.finP), 2.718281)
+	def WorkdoneIsothermalV(self, finalVolume):
+	"""This function calculates total workdone in a piston cylinder system when the process is isothermal and initial and final volume is given"""
+		self.finV= finalVolume
+		return self.moles * self.R * self.initTemp * log((self.finV/self.initV), 2.718281)
+	def WorkAdiabatic(self, finalTemprature):
+	"""This function calculates total workdone in a piston cylinder system when the process is adiabatic"""
+		self.finTemp= finalTemprature
+		return (-3/2)*self.moles*self.R*(self.finTemp - self.initTemp)
